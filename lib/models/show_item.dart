@@ -1,81 +1,80 @@
 import 'dart:convert';
 
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 class ShowItem {
-  bool adult;
-  String backdropPath;
-  int id;
-  String name;
-  String originalName;
-  String overview;
-  String posterPath;
-  String mediaType;
-  String originalLanguage;
-  List<int> genreIds;
-  double popularity;
-  String firstAirDate;
-  double voteAverage;
-  int voteCount;
-  List<String> originCountry;
+  final int id;
+  final String mediaType;
+
+  // Fields that can be null
+  final String? backdropPath;
+  final String? posterPath;
+  final String? overview;
+
+  // Unified fields (name/title, release/air date)
+  final String name;
+  final String releaseDate;
+
+  // Fields with default values
+  final bool adult;
+  final List<int> genreIds;
+  final double popularity;
+  final double voteAverage;
+  final int voteCount;
+
   ShowItem({
-    required this.adult,
-    required this.backdropPath,
     required this.id,
-    required this.name,
-    required this.originalName,
-    required this.overview,
-    required this.posterPath,
     required this.mediaType,
-    required this.originalLanguage,
-    required this.genreIds,
-    required this.popularity,
-    required this.firstAirDate,
-    required this.voteAverage,
-    required this.voteCount,
-    required this.originCountry,
+    this.backdropPath,
+    this.posterPath,
+    this.overview,
+    required this.name,
+    required this.releaseDate,
+    this.adult = false,
+    this.genreIds = const [],
+    this.popularity = 0.0,
+    this.voteAverage = 0.0,
+    this.voteCount = 0,
   });
 
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'adult': adult,
-      'backdropPath': backdropPath,
-      'id': id,
-      'name': name,
-      'originalName': originalName,
-      'overview': overview,
-      'posterPath': posterPath,
-      'mediaType': mediaType,
-      'originalLanguage': originalLanguage,
-      'genreIds': genreIds,
-      'popularity': popularity,
-      'firstAirDate': firstAirDate,
-      'voteAverage': voteAverage,
-      'voteCount': voteCount,
-      'originCountry': originCountry,
-    };
-  }
-
   factory ShowItem.fromMap(Map<String, dynamic> map) {
+    // Determine the media type first, it's crucial
+    final mediaType = map['media_type'] as String? ?? 'unknown';
+
+    // Handle name/title differences
+    String name;
+    if (mediaType == 'movie') {
+      name = map['title'] as String? ?? '';
+    } else if (mediaType == 'tv' || mediaType == 'person') {
+      name = map['name'] as String? ?? '';
+    } else {
+      name = '';
+    }
+
+    // Handle date differences
+    String releaseDate;
+    if (mediaType == 'movie') {
+      releaseDate = map['release_date'] as String? ?? '';
+    } else if (mediaType == 'tv') {
+      releaseDate = map['first_air_date'] as String? ?? '';
+    } else {
+      releaseDate = ''; // People don't have release dates
+    }
+
     return ShowItem(
-      adult: map['adult'] as bool,
-      backdropPath: map['backdropPath'] as String,
-      id: map['id'] as int,
-      name: map['name'] as String,
-      originalName: map['originalName'] as String,
-      overview: map['overview'] as String,
-      posterPath: map['posterPath'] as String,
-      mediaType: map['mediaType'] as String,
-      originalLanguage: map['originalLanguage'] as String,
-      genreIds: List<int>.from(map['genreIds'] as List<int>),
-      popularity: map['popularity'] as double,
-      firstAirDate: map['firstAirDate'] as String,
-      voteAverage: map['voteAverage'] as double,
-      voteCount: map['voteCount'] as int,
-      originCountry: List<String>.from(map['originCountry'] as List<String>),
+      id: map['id'] as int? ?? 0,
+      mediaType: mediaType,
+      name: name,
+      releaseDate: releaseDate,
+      adult: map['adult'] as bool? ?? false,
+      backdropPath: map['backdrop_path'] as String?,
+      posterPath: map['poster_path'] as String?,
+      overview: map['overview'] as String?,
+      genreIds: List<int>.from(map['genre_ids'] as List? ?? []),
+      // Safe casting for numbers
+      popularity: (map['popularity'] as num?)?.toDouble() ?? 0.0,
+      voteAverage: (map['vote_average'] as num?)?.toDouble() ?? 0.0,
+      voteCount: map['vote_count'] as int? ?? 0,
     );
   }
-
-  String toJson() => json.encode(toMap());
 
   factory ShowItem.fromJson(String source) =>
       ShowItem.fromMap(json.decode(source) as Map<String, dynamic>);

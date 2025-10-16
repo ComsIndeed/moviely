@@ -20,6 +20,8 @@ dependencies:
   fluttertoast: ^9.0.0
   cached_network_image: ^3.4.1
   provider: ^6.1.5+1
+  bloc_concurrency: ^0.3.0
+  rxdart: ^0.28.0
 
 dev_dependencies:
   flutter_test:

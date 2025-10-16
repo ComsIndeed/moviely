@@ -18,8 +18,13 @@ class TmdbRepository {
     final response =
         await api.search.queryMulti(query, includeAdult: true)
             as Map<String, dynamic>;
-    final items = response["results"] as List<Map<String, dynamic>>;
-    final showItems = items.map((e) => ShowItem.fromMap(e)).toList();
+    final results =
+        response['results'] as List; // Safely get the list of results
+    final showItems = results
+        .map(
+          (item) => ShowItem.fromMap(item as Map<String, dynamic>),
+        ) // Cast EACH item
+        .toList();
     return showItems;
   }
 }

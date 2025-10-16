@@ -7,7 +7,7 @@ class Debouncer {
 
   Debouncer(this.delay);
 
-  void run(VoidCallback action) {
+  FutureOr<void> run(VoidCallback action) {
     // 1. Cancel the previous timer if it exists.
     _timer?.cancel();
 

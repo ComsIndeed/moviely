@@ -47,6 +47,7 @@ class _AuthWidgetState extends State<AuthWidget> {
     _user = user;
     final credentials = await Provider.of<FirestoreRepository>(
       context,
+      listen: false,
     ).credentials;
     final apiKey = credentials?.apiKey ?? "";
     final readAcessToken = credentials?.readAccessToken ?? "";
