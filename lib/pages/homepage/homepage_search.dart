@@ -15,14 +15,6 @@ class HomepageSearch extends StatefulWidget {
 class _HomepageSearchState extends State<HomepageSearch> {
   final debouncer = Debouncer(Duration(milliseconds: 500));
 
-  void onChange(value) {
-    debouncer.run(() {
-      context.read<HomepageSearchBloc>().add(
-        HomepageSearchQueryEvent(query: value),
-      );
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HomepageSearchBloc, HomepageSearchState>(
@@ -45,7 +37,9 @@ class _HomepageSearchState extends State<HomepageSearch> {
               color: Theme.of(context).colorScheme.primary,
             ),
           ),
-          onChanged: onChange,
+          onChanged: (value) => context.read<HomepageSearchBloc>().add(
+            HomepageSearchQueryEvent(query: value),
+          ),
           suggestionsBuilder: (context, controller) {
             if (state is HomepageSearchInitialState) {
               return [
