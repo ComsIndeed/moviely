@@ -27,4 +27,8 @@ class TmdbRepository {
         .toList();
     return showItems;
   }
+
+  Future<dynamic> getMovie({required int movieId}) async {
+    final response = await api.movies.getDetails(movieId);
+  }
 }

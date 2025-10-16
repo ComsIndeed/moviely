@@ -15,8 +15,7 @@ class HomepageSearchBloc
         return;
       }
 
-      emit(HomepageSearchLoadingState());
-      print(event.query);
+      // emit(HomepageSearchLoadingState());
 
       try {
         final results = await tmdbRepo.search(query: event.query);

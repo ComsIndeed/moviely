@@ -40,7 +40,7 @@ void main() async {
 class MainApp extends StatelessWidget {
   MainApp({super.key});
 
-  final colorScheme = ColorScheme.fromSeed(seedColor: Colors.cyanAccent);
+  final colorScheme = ColorScheme.fromSeed(seedColor: Colors.pink);
 
   @override
   Widget build(BuildContext context) {

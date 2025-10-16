@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moviely/blocs/homepage_search_bloc/homepage_search_bloc.dart';
 import 'package:moviely/blocs/homepage_search_bloc/homepage_search_event.dart';
 import 'package:moviely/blocs/homepage_search_bloc/homepage_search_state.dart';
+import 'package:moviely/pages/show_page/show_page.dart';
 import 'package:moviely/utilities/debouncer.dart';
 // Assuming RoundedSuperellipseBorder exists and is correctly imported/defined
 
@@ -14,6 +15,8 @@ class HomepageSearch extends StatefulWidget {
 }
 
 class _HomepageSearchState extends State<HomepageSearch> {
+  final debouncer = Debouncer(Duration(milliseconds: 500));
+
   @override
   Widget build(BuildContext context) {
     return SearchAnchor.bar(
@@ -37,10 +40,11 @@ class _HomepageSearchState extends State<HomepageSearch> {
         ),
       ),
       onChanged: (value) {
-        // Event added directly, BLoC handles the debounce. Good stuff.
-        context.read<HomepageSearchBloc>().add(
-          HomepageSearchQueryEvent(query: value),
-        );
+        debouncer.run(() {
+          context.read<HomepageSearchBloc>().add(
+            HomepageSearchQueryEvent(query: value),
+          );
+        });
       },
       suggestionsBuilder: (context, controller) {
         // The BlocBuilder should return the Iterable<Widget> directly.
@@ -102,10 +106,17 @@ class _HomepageSearchState extends State<HomepageSearch> {
                                 fit: BoxFit.cover,
                               )
                             : const Icon(Icons.movie),
-                        // Assuming item has a .name property
-                        title: Text(item.name),
-                        // Assuming item has a .mediaType property
-                        subtitle: Text('Type: ${item.mediaType}'),
+                        title: item.adult
+                            ? Badge(label: Text("18+"), child: Text(item.name))
+                            : Text(item.name),
+                        subtitle: Text(
+                          '${item.mediaType} ${item.releaseDate.isNotEmpty ? "|" : ""} ${item.releaseDate.substring(0, item.releaseDate.length > 4 ? 4 : item.releaseDate.length)}',
+                        ),
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => ShowPage(showItem: item),
+                          ),
+                        ),
                       ),
                     ),
                   ],

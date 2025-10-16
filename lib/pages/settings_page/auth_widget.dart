@@ -53,6 +53,7 @@ class _AuthWidgetState extends State<AuthWidget> {
     final readAcessToken = credentials?.readAccessToken ?? "";
     Provider.of<TmdbRepository>(
       context,
+      listen: false,
     ).setCredentials(apiKey: apiKey, readAcessToken: readAcessToken);
 
     if (user.user != null) {
