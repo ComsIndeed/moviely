@@ -22,7 +22,7 @@ void main() async {
   final readAcessToken = (await creds)?.readAccessToken;
   final tmdb = TmdbRepository(
     apiKey: apiKey ?? "",
-    readAcessToken: readAcessToken ?? "",
+    readAccessToken: readAcessToken ?? "",
   );
 
   runApp(

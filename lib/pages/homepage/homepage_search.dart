@@ -3,7 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moviely/blocs/homepage_search_bloc/homepage_search_bloc.dart';
 import 'package:moviely/blocs/homepage_search_bloc/homepage_search_event.dart';
 import 'package:moviely/blocs/homepage_search_bloc/homepage_search_state.dart';
+import 'package:moviely/blocs/show_page_bloc/show_page_bloc.dart';
 import 'package:moviely/pages/show_page/show_page.dart';
+import 'package:moviely/repositories/tmdb_repository.dart';
 import 'package:moviely/utilities/debouncer.dart';
 // Assuming RoundedSuperellipseBorder exists and is correctly imported/defined
 
@@ -114,7 +116,11 @@ class _HomepageSearchState extends State<HomepageSearch> {
                         ),
                         onTap: () => Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (_) => ShowPage(showItem: item),
+                            builder: (_) => BlocProvider(
+                              create: (_) =>
+                                  ShowPageBloc(context.read<TmdbRepository>()),
+                              child: ShowPage(showItem: item),
+                            ),
                           ),
                         ),
                       ),

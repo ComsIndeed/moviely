@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:moviely/repositories/firestore_repository.dart';
 import 'package:moviely/repositories/tmdb_repository.dart';
 import 'package:provider/provider.dart';
@@ -54,7 +55,7 @@ class _AuthWidgetState extends State<AuthWidget> {
     Provider.of<TmdbRepository>(
       context,
       listen: false,
-    ).setCredentials(apiKey: apiKey, readAcessToken: readAcessToken);
+    ).setCredentials(apiKey: apiKey, readAccessToken: readAcessToken);
 
     if (user.user != null) {
       setState(
@@ -75,7 +76,7 @@ class _AuthWidgetState extends State<AuthWidget> {
           return Column(
             children: [
               SizedBox(height: 16),
-              CircleAvatar(radius: 48, child: Icon(Icons.person, size: 64)),
+              CircleAvatar(radius: 48, child: Lottie.asset('assets/girl.json')),
               Text("Logged in as"),
               Text(asyncSnapshot.data!.email!),
             ],
@@ -93,7 +94,8 @@ class _AuthWidgetState extends State<AuthWidget> {
                     width: 128,
                     child: CircleAvatar(
                       radius: 48,
-                      child: Icon(Icons.person, size: 64),
+                      // child: Icon(Icons.person, size: 64),
+                      child: Lottie.asset('assets/girl.json'),
                     ),
                   ),
                 ),

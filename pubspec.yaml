@@ -1,6 +1,6 @@
 name: moviely
 description: "A new Flutter project."
-publish_to: 'none'
+publish_to: "none"
 version: 0.1.0
 
 environment:
@@ -22,6 +22,7 @@ dependencies:
   provider: ^6.1.5+1
   bloc_concurrency: ^0.3.0
   rxdart: ^0.28.0
+  lottie: ^3.3.2
 
 dev_dependencies:
   flutter_test:
@@ -30,3 +31,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/
+    - assets/girl.json
+    - assets/rabbit_magic.json

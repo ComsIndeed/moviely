@@ -1,17 +1,21 @@
 import 'dart:convert';
+
 import 'package:moviely/models/episode.dart';
 import 'package:moviely/models/genre.dart';
 import 'package:moviely/models/network.dart';
 import 'package:moviely/models/production_company.dart';
 import 'package:moviely/models/production_country.dart';
 import 'package:moviely/models/season.dart';
-import 'package:moviely/models/show_item.dart';
 import 'package:moviely/models/spoken_language.dart';
+
+// Helper models (Genre, ProductionCompany, etc. are assumed to be in the same file or imported)
+// For brevity, I'll only show the TvShow and Season classes with the new changes.
+// The other helper models (Episode, Network, etc.) from my previous answer remain the same.
 
 class TvShow {
   final bool adult;
   final String? backdropPath;
-  final List<dynamic> createdBy; // Typically a list of maps
+  final List<dynamic> createdBy;
   final List<int> episodeRunTime;
   final DateTime? firstAirDate;
   final List<Genre> genres;
@@ -77,8 +81,6 @@ class TvShow {
 
   factory TvShow.fromJson(String str) => TvShow.fromMap(json.decode(str));
 
-  String toJson() => json.encode(toMap());
-
   factory TvShow.fromMap(Map<String, dynamic> json) => TvShow(
     adult: json["adult"] ?? false,
     backdropPath: json["backdrop_path"],
@@ -102,7 +104,7 @@ class TvShow {
     networks: List<Network>.from(
       (json["networks"] ?? []).map((x) => Network.fromMap(x)),
     ),
-    numberOfEpisodes: json["number_of_ episodes"] ?? 0,
+    numberOfEpisodes: json["number_of_episodes"] ?? 0,
     numberOfSeasons: json["number_of_seasons"] ?? 0,
     originCountry: List<String>.from(
       (json["origin_country"] ?? []).map((x) => x),
@@ -135,43 +137,41 @@ class TvShow {
     voteCount: json["vote_count"] ?? 0,
   );
 
-  Map<String, dynamic> toMap() => {
-    "adult": adult,
-    "backdrop_path": backdropPath,
-    "created_by": List<dynamic>.from(createdBy.map((x) => x)),
-    "episode_run_time": List<dynamic>.from(episodeRunTime.map((x) => x)),
-    "first_air_date": firstAirDate?.toIso8601String(),
-    "genres": List<dynamic>.from(genres.map((x) => x.toMap())),
-    "homepage": homepage,
-    "id": id,
-    "in_production": inProduction,
-    "languages": List<dynamic>.from(languages.map((x) => x)),
-    "last_air_date": lastAirDate?.toIso8601String(),
-    "last_episode_to_air": lastEpisodeToAir?.toMap(),
-    "name": name,
-    "networks": List<dynamic>.from(networks.map((x) => x.toMap())),
-    "number_of_episodes": numberOfEpisodes,
-    "number_of_seasons": numberOfSeasons,
-    "origin_country": List<dynamic>.from(originCountry.map((x) => x)),
-    "original_language": originalLanguage,
-    "original_name": originalName,
-    "overview": overview,
-    "popularity": popularity,
-    "poster_path": posterPath,
-    "production_companies": List<dynamic>.from(
-      productionCompanies.map((x) => x.toMap()),
-    ),
-    "production_countries": List<dynamic>.from(
-      productionCountries.map((x) => x.toMap()),
-    ),
-    "seasons": List<dynamic>.from(seasons.map((x) => x.toMap())),
-    "spoken_languages": List<dynamic>.from(
-      spokenLanguages.map((x) => x.toMap()),
-    ),
-    "status": status,
-    "tagline": tagline,
-    "type": type,
-    "vote_average": voteAverage,
-    "vote_count": voteCount,
-  };
+  // The copyWith method allows us to create a new instance with updated fields.
+  // We only need to update the seasons list in our case.
+  TvShow copyWith({List<Season>? seasons}) {
+    return TvShow(
+      adult: adult,
+      backdropPath: backdropPath,
+      createdBy: createdBy,
+      episodeRunTime: episodeRunTime,
+      firstAirDate: firstAirDate,
+      genres: genres,
+      homepage: homepage,
+      id: id,
+      inProduction: inProduction,
+      languages: languages,
+      lastAirDate: lastAirDate,
+      lastEpisodeToAir: lastEpisodeToAir,
+      name: name,
+      networks: networks,
+      numberOfEpisodes: numberOfEpisodes,
+      numberOfSeasons: numberOfSeasons,
+      originCountry: originCountry,
+      originalLanguage: originalLanguage,
+      originalName: originalName,
+      overview: overview,
+      popularity: popularity,
+      posterPath: posterPath,
+      productionCompanies: productionCompanies,
+      productionCountries: productionCountries,
+      seasons: seasons ?? this.seasons, // Use the new seasons list if provided
+      spokenLanguages: spokenLanguages,
+      status: status,
+      tagline: tagline,
+      type: type,
+      voteAverage: voteAverage,
+      voteCount: voteCount,
+    );
+  }
 }

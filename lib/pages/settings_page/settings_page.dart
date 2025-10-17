@@ -41,7 +41,7 @@ class SettingsPage extends StatelessWidget {
                           listen: false,
                         ).setCredentials(
                           apiKey: credentials.apiKey,
-                          readAcessToken: credentials.readAccessToken,
+                          readAccessToken: credentials.readAccessToken,
                         );
                         Fluttertoast.showToast(msg: "Refetched API Keys");
                       } catch (e) {
