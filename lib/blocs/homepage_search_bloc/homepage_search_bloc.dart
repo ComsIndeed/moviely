@@ -15,8 +15,6 @@ class HomepageSearchBloc
         return;
       }
 
-      // emit(HomepageSearchLoadingState());
-
       try {
         final results = await tmdbRepo.search(query: event.query);
         Map<String, List<ShowItem>> searchResults = {
