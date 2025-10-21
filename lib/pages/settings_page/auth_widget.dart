@@ -40,30 +40,44 @@ class _AuthWidgetState extends State<AuthWidget> {
       return;
     }
     setState(() => response = "Logging in...");
-    final user = await FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: emailController.text,
-      password: passwordController.text,
+
+    // Store context before async operations
+    final firestoreRepo = Provider.of<FirestoreRepository>(
+      context,
+      listen: false,
     );
+    final tmdbRepo = Provider.of<TmdbRepository>(context, listen: false);
 
-    _user = user;
-    final credentials = await Provider.of<FirestoreRepository>(
-      context,
-      listen: false,
-    ).credentials;
-    final apiKey = credentials?.apiKey ?? "";
-    final readAcessToken = credentials?.readAccessToken ?? "";
-    Provider.of<TmdbRepository>(
-      context,
-      listen: false,
-    ).setCredentials(apiKey: apiKey, readAccessToken: readAcessToken);
-
-    if (user.user != null) {
-      setState(
-        () => response =
-            "Logged in as ${user.user!.displayName ?? user.user!.email}.",
+    try {
+      final user = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
       );
-    } else {
-      setState(() => response = "Login failed.");
+
+      // Check if widget is still mounted after async operation
+      if (!mounted) return;
+
+      _user = user;
+      final credentials = await firestoreRepo.credentials;
+
+      // Check if widget is still mounted after async operation
+      if (!mounted) return;
+
+      final apiKey = credentials?.apiKey ?? "";
+      final readAcessToken = credentials?.readAccessToken ?? "";
+      tmdbRepo.setCredentials(apiKey: apiKey, readAccessToken: readAcessToken);
+
+      if (user.user != null) {
+        setState(
+          () => response =
+              "Logged in as ${user.user!.displayName ?? user.user!.email}.",
+        );
+      } else {
+        setState(() => response = "Login failed.");
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => response = "Login failed: ${e.toString()}");
     }
   }
 
@@ -79,6 +93,21 @@ class _AuthWidgetState extends State<AuthWidget> {
               CircleAvatar(radius: 48, child: Lottie.asset('assets/girl.json')),
               Text("Logged in as"),
               Text(asyncSnapshot.data!.email!),
+              SizedBox(height: 16),
+              FilledButton(
+                onPressed: () async {
+                  await FirebaseAuth.instance.signOut();
+                  if (!mounted) return;
+                  setState(() => response = "Logged out.");
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "Logout",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                  ),
+                ),
+              ),
             ],
           );
         }
